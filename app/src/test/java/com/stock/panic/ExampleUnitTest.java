@@ -1,4 +1,4 @@
-package com.example.panic;
+package com.stock.panic;
 
 import org.junit.Test;
 

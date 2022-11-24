@@ -4,8 +4,6 @@ package com.stock.panic.ui.camera;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -26,7 +24,6 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.panic.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,9 +33,10 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.stock.panic.R;
 import com.stock.panic.data.model.CameraSql;
+import com.stock.panic.utils.TokenRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -46,7 +44,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
-public class CodBarsScanActivity extends AppCompatActivity {
+public class BarcodeScanActivity extends AppCompatActivity {
 
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
@@ -55,53 +53,12 @@ public class CodBarsScanActivity extends AppCompatActivity {
     private static Button btnEstoque;
     private SqLite sql = null;
     private CameraSql cameraSql;
+    private TokenRequest tokenRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cod_bars_scan);
-
-        //initiaalllllllll
-
-        sql = new SqLite(getApplicationContext());
-        cameraSql = new CameraSql();
-
-        SQLiteDatabase db = sql.getReadableDatabase();
-
-
-        String[] projection = {
-                cameraSql.getColumnId(),
-                cameraSql.getColumnHash()
-        };
-
-        String selection = cameraSql.getColumnId() + " = ?";
-        String[] selectionArgs = {"1"};
-        String sortOrder = cameraSql.getColumnId() + " DESC";
-
-        Cursor cursor = db.query(
-                cameraSql.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-
-        );
-
-        List itemIds = new ArrayList<>();
-        while(cursor.moveToNext()) {
-            long itemId = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(cameraSql.getColumnId()));
-            itemIds.add(itemId);
-        }
-
-        Toast.makeText(getApplicationContext(), itemIds.get(0) + " Here", Toast.LENGTH_LONG).show();
-
-        cursor.close();
-
-
-        //enddddddddddddddd
 
         Button btn = findViewById(R.id.button2);
         btnEstoque = findViewById(R.id.button3);
@@ -112,7 +69,7 @@ public class CodBarsScanActivity extends AppCompatActivity {
         BarcodeScannerOptions options =
                 new BarcodeScannerOptions.Builder()
                         .setBarcodeFormats(
-                                Barcode.FORMAT_CODE_128)
+                                    Barcode.FORMAT_CODE_128)
                         .build();
         scanner = BarcodeScanning.getClient(options);
 

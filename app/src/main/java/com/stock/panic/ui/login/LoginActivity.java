@@ -28,11 +28,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.panic.R;
-import com.example.panic.databinding.ActivityLoginBinding;
+import com.stock.panic.R;
 import com.stock.panic.data.model.CameraSql;
-import com.stock.panic.ui.camera.CodBarsScanActivity;
+import com.stock.panic.databinding.ActivityLoginBinding;
+import com.stock.panic.ui.camera.BarcodeScanActivity;
 import com.stock.panic.ui.camera.SqLite;
+import com.stock.panic.utils.TokenRequest;
+import com.stock.panic.utils.Uris;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,12 +46,26 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
     private SqLite sql = null;
-    private SQLiteDatabase db;
     private CameraSql cameraSql;
+    private TokenRequest tokenRequest;
+    private Uris uris;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        uris = new Uris();
+        tokenRequest = new TokenRequest();
+
+        Toast.makeText(getApplicationContext(), "here "+ tokenRequest.getContaId(getApplicationContext()) + " ----", Toast.LENGTH_LONG).show();
+
+        if (tokenRequest.getToken(getApplicationContext()) != null && tokenRequest.getContaId(getApplicationContext()) != null) {
+
+            Intent show = new Intent(getApplicationContext(), BarcodeScanActivity.class);
+            startActivity(show);
+
+        };
 
         cameraSql = new CameraSql();
 
@@ -146,7 +162,6 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setProgress(50);
 
                 try {
-                    String url = "http://192.168.0.108:8080/login";
 
                     JSONObject jsonBody = new JSONObject();
                     jsonBody.put("email", usernameEditText.getText());
@@ -154,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
                     final String requestBody = jsonBody.toString();
 
                     // Request a string response from the provided URL.
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, uris.getLogin(),
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
@@ -162,16 +177,19 @@ public class LoginActivity extends AppCompatActivity {
                                     loadingProgressBar.setProgress(100);
                                     loadingProgressBar.setVisibility(View.INVISIBLE);
                                     try {
+
+                                        db.execSQL(cameraSql.getSqlTruncateTable());
+
                                         JSONObject body = new JSONObject(response);
 
-                                        Toast.makeText(getApplicationContext(),(String) body.get("hash"), Toast.LENGTH_LONG).show();
                                         ContentValues values = new ContentValues();
                                         values.put(cameraSql.getColumnHash(),(String) body.get("hash"));
                                         values.put(cameraSql.getColumnId(), "1");
+                                        values.put(cameraSql.getColumnContaId(), (String) body.get("conta_id"));
 
                                         long newRowId = db.insert(cameraSql.getTableName(), null, values);
 
-                                        Intent show = new Intent(getApplicationContext(), CodBarsScanActivity.class);
+                                        Intent show = new Intent(getApplicationContext(), BarcodeScanActivity.class);
 
                                         startActivity(show);
 
@@ -216,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }catch(JSONException e){
 
-                    Intent show = new Intent(getApplicationContext(), CodBarsScanActivity.class);
+                    Intent show = new Intent(getApplicationContext(), BarcodeScanActivity.class);
 
                     startActivity(show);
 

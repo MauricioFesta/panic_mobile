@@ -60,7 +60,9 @@ public class LoginActivity extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), "here "+ tokenRequest.getContaId(getApplicationContext()) + " ----", Toast.LENGTH_LONG).show();
 
-        if (tokenRequest.getToken(getApplicationContext()) != null && tokenRequest.getContaId(getApplicationContext()) != null) {
+        if (tokenRequest.getToken(getApplicationContext()) != null &&
+                tokenRequest.getContaId(getApplicationContext()) != null &&
+                tokenRequest.getUserId(getApplicationContext()) != null) {
 
             Intent show = new Intent(getApplicationContext(), BarcodeScanActivity.class);
             startActivity(show);
@@ -72,6 +74,9 @@ public class LoginActivity extends AppCompatActivity {
         sql = new SqLite(getApplicationContext());
 
         SQLiteDatabase db = sql.getWritableDatabase();
+
+        //db.execSQL(cameraSql.getSqlDeleteTable());
+        //db.execSQL(cameraSql.getSqlCreateTables());
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -165,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     JSONObject jsonBody = new JSONObject();
                     jsonBody.put("email", usernameEditText.getText());
-                    jsonBody.put("senha", "123");
+                    jsonBody.put("senha", passwordEditText.getText());
                     final String requestBody = jsonBody.toString();
 
                     // Request a string response from the provided URL.
@@ -186,6 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                                         values.put(cameraSql.getColumnHash(),(String) body.get("hash"));
                                         values.put(cameraSql.getColumnId(), "1");
                                         values.put(cameraSql.getColumnContaId(), (String) body.get("conta_id"));
+                                        values.put(cameraSql.getColumnUserId(), (String) body.get("user_id"));
 
                                         long newRowId = db.insert(cameraSql.getTableName(), null, values);
 

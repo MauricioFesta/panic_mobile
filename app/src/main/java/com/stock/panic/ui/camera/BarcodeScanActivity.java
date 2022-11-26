@@ -6,6 +6,8 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -95,6 +97,22 @@ public class BarcodeScanActivity extends AppCompatActivity {
 
             }
         });
+
+        numberCode.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                if(s.length() > 0){
+                    btnEstoque.setVisibility(View.VISIBLE);
+                }else{
+                    btnEstoque.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
 
     }
 
@@ -196,7 +214,7 @@ public class BarcodeScanActivity extends AppCompatActivity {
                                         TimeUnit.SECONDS.sleep(1);
                                         btnEstoque.setVisibility(View.VISIBLE);
                                         Toast.makeText(getApplicationContext(), "Codígo lido: " + barcodes.get(0).getRawValue(), Toast.LENGTH_LONG).show();
-                                        numberCode.getText().clear();
+                                        clearBarcodeInput();
                                         numberCode.append(barcodes.get(0).getRawValue());
 
 
@@ -219,6 +237,12 @@ public class BarcodeScanActivity extends AppCompatActivity {
             }
 
         };
+
+    }
+
+    public void clearBarcodeInput(){
+
+        numberCode.getText().clear();
 
     }
 

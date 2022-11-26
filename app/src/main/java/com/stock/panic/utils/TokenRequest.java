@@ -98,4 +98,48 @@ public class TokenRequest {
         return (String) itemIds.get(0);
     }
 
+
+    public String getUserId(Context contex){
+
+        sql = new SqLite(contex);
+        cameraSql = new CameraSql();
+
+        SQLiteDatabase db = sql.getReadableDatabase();
+
+        String[] projection = {
+                cameraSql.getColumnId(),
+                cameraSql.getColumnHash(),
+                cameraSql.getColumnUserId()
+        };
+
+        String selection = cameraSql.getColumnId() + " = ?";
+        String[] selectionArgs = {"1"};
+        String sortOrder = cameraSql.getColumnId() + " DESC";
+
+        Cursor cursor = db.query(
+                cameraSql.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+
+        );
+
+        List itemIds = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            String itemId = cursor.getString(2);
+            itemIds.add(itemId);
+        }
+
+        cursor.close();
+
+        if(itemIds.isEmpty()){
+            return null;
+        }
+        return (String) itemIds.get(0);
+    }
+
+
 }

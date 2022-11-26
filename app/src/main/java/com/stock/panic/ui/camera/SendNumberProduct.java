@@ -58,9 +58,8 @@ public class SendNumberProduct extends BarcodeScanActivity{
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-
-
-                            Toast.makeText(context, "Estoque alterado com sucesso! " +  response.indexOf(0), Toast.LENGTH_LONG).show();
+                            clearBarcodeInput();
+                            Toast.makeText(context, "Estoque alterado com sucesso!", Toast.LENGTH_LONG).show();
 
                         }
 
@@ -101,6 +100,7 @@ public class SendNumberProduct extends BarcodeScanActivity{
                     Map<String, String> headers = new HashMap<>();
                     headers.put("Authorization", "Bearer " + tokenRequest.getToken(context));
                     headers.put("AuthorizationContaId", tokenRequest.getContaId(context));
+                    headers.put("AuthorizationUserId", tokenRequest.getUserId(context));
                     return headers;
                 }
             };

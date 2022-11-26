@@ -9,18 +9,21 @@ public class CameraSql {
     public String TABLE_NAME;
     public String SQL_CLEAR_ALL_DATA;
     public String COLUMN_CONTA_ID;
+    public String COLUMN_USER_ID;
 
 
     public CameraSql(){
 
         this.COLUMN_CONTA_ID = "conta_id";
+        this.COLUMN_USER_ID = "user_id";
         this.COLUMN_HASH = "tk";
         this.COLUMN_ID = "_id";
         this.TABLE_NAME = "token";
         this.SQL_CREATE_ENTRIES = "CREATE TABLE IF NOT EXISTS " + getTableName() + " (" +
                 getColumnId()  + " INTEGER PRIMARY KEY," +
                 getColumnHash() + " TEXT, " +
-                getColumnContaId() + " TEXT)";
+                getColumnContaId() + " TEXT, " +
+                getColumnUserId() + " TEXT)";
 
         this.SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + getTableName();
         this.DATABASE_NAME= "panic.db";
@@ -65,4 +68,8 @@ public class CameraSql {
 
     }
 
+    public String getColumnUserId(){
+
+        return COLUMN_USER_ID;
+    }
 }

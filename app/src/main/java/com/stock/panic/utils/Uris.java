@@ -4,11 +4,11 @@ public class Uris {
 
    public String getApiDecreaseStockUri(){
 
-      return "http://192.168.0.108:8080/products/decrease";
+      return "https://panic.net.br/products/decrease";
    }
 
    public String getLogin(){
 
-      return "http://192.168.0.108:8080/login-mobile";
+      return "https://panic.net.br/login-mobile";
    }
 }
